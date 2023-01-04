@@ -41,7 +41,7 @@ namespace ix
         _ws.setOnCloseCallback(
             [this](uint16_t code, const std::string& reason, size_t wireSize, bool remote)
             {
-                std::lock_guard<std::mutex> lock{_messageCallbackMutex};
+                std::lock_guard<std::mutex> lock{ _messageCallbackMutex };
                 if(_onMessageCallback) {
                     _onMessageCallback(
                         ix::make_unique<WebSocketMessage>(WebSocketMessageType::Close,
@@ -346,7 +346,6 @@ namespace ix
                 connectErr.reason = status.errorStr;
                 connectErr.http_status = status.http_status;
 
-                std::lock_guard<std::mutex> lock{_messageCallbackMutex};
                 _onMessageCallback(ix::make_unique<WebSocketMessage>(WebSocketMessageType::Error,
                                                                      emptyMsg,
                                                                      0,
