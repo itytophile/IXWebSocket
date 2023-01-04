@@ -43,7 +43,6 @@
 #include "IXWebSocketHttpHeaders.h"
 #include <chrono>
 #include <cstdlib>
-#include <iostream>
 #include <sstream>
 #include <string.h>
 #include <string>
