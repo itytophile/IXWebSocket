@@ -280,6 +280,6 @@ namespace ix
         std::string getMergedChunks() const;
 
         void setCloseReason(const std::string& reason);
-        const std::string& getCloseReason() const;
+        std::string getCloseReason() const;
     };
 } // namespace ix

@@ -11,10 +11,8 @@
 #include "IXUniquePtr.h"
 #include "IXUtf8Validator.h"
 #include "IXWebSocketHandshake.h"
-#include <cassert>
 #include <cmath>
 #include <cstdint>
-
 
 namespace
 {
@@ -45,13 +43,16 @@ namespace ix
         _ws.setOnCloseCallback(
             [this](uint16_t code, const std::string& reason, size_t wireSize, bool remote)
             {
-                _onMessageCallback(
-                    ix::make_unique<WebSocketMessage>(WebSocketMessageType::Close,
-                                                      emptyMsg,
-                                                      wireSize,
-                                                      WebSocketErrorInfo(),
-                                                      WebSocketOpenInfo(),
-                                                      WebSocketCloseInfo(code, reason, remote)));
+                std::lock_guard<std::mutex> lock{ _messageCallbackMutex };
+                if(_onMessageCallback) {
+                    _onMessageCallback(
+                        ix::make_unique<WebSocketMessage>(WebSocketMessageType::Close,
+                                                          emptyMsg,
+                                                          wireSize,
+                                                          WebSocketErrorInfo(),
+                                                          WebSocketOpenInfo(),
+                                                          WebSocketCloseInfo(code, reason, remote)));
+                }
             });
     }
 
@@ -450,6 +451,7 @@ namespace ix
 
     void WebSocket::setOnMessageCallback(const OnMessageCallback& callback)
     {
+        std::lock_guard<std::mutex> lock{_messageCallbackMutex};
         _onMessageCallback = callback;
     }
 

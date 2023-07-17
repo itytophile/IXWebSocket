@@ -42,10 +42,12 @@ namespace ix
     {
         stopAcceptingConnections();
 
-        auto clients = getClients();
-        for (auto client : clients)
         {
-            client->close();
+            std::lock_guard<std::mutex> lock { _clientsMutex };
+            for (const auto& client : _clients)
+            {
+                client->close();
+            }
         }
 
         SocketServer::stop();

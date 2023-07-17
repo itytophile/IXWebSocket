@@ -42,7 +42,6 @@
 #include "IXWebSocketHandshake.h"
 #include "IXWebSocketHttpHeaders.h"
 #include <chrono>
-#include <cstdarg>
 #include <cstdlib>
 #include <sstream>
 #include <string.h>
@@ -235,10 +234,8 @@ namespace ix
 
     void WebSocketTransport::initTimePointsAfterConnect()
     {
-        {
-            std::lock_guard<std::mutex> lock(_lastSendPingTimePointMutex);
-            _lastSendPingTimePoint = std::chrono::steady_clock::now();
-        }
+        std::lock_guard<std::mutex> lock(_lastSendPingTimePointMutex);
+        _lastSendPingTimePoint = std::chrono::steady_clock::now();
     }
 
     // Only consider send PING time points for that computation.
@@ -1232,7 +1229,7 @@ namespace ix
         _closeReason = reason;
     }
 
-    const std::string& WebSocketTransport::getCloseReason() const
+    std::string WebSocketTransport::getCloseReason() const
     {
         std::lock_guard<std::mutex> lock(_closeReasonMutex);
         return _closeReason;

@@ -135,8 +135,6 @@ namespace ix
                                             bool enablePerMessageDeflate,
                                             HttpRequestPtr request = nullptr);
 
-        WebSocketTransport _ws;
-
         std::string _url;
         WebSocketHttpHeaders _extraHeaders;
 
@@ -147,6 +145,7 @@ namespace ix
         mutable std::mutex _configMutex; // protect all config variables access
 
         OnMessageCallback _onMessageCallback;
+
         static OnTrafficTrackerCallback _onTrafficTrackerCallback;
 
         std::atomic<bool> _stop;
@@ -179,8 +178,13 @@ namespace ix
         static const int kDefaultPingIntervalSecs;
         static const int kDefaultPingTimeoutSecs;
 
+        std::mutex _messageCallbackMutex;
+
         // Subprotocols
         std::vector<std::string> _subProtocols;
+
+        // declared at the end to destroy it at first
+        WebSocketTransport _ws;
 
         friend class WebSocketServer;
     };
